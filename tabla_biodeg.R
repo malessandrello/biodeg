@@ -12,7 +12,7 @@ fig2 <- deg_htp2 %>% mutate(Tratamiento = factor(case_when(
   geom_bar(stat = "identity", position = "dodge", show.legend = FALSE)+
   geom_hline(yintercept = 10000) + 
   scale_x_continuous(breaks = c(0, 29, 57, 85, 113, 139))+
-  xlab("Tiempo (días)")+
+  xlab(NULL)+
   ylab("HTP (mg/kg)")
 
 fig3 <- deg_htp2 %>% mutate(Tratamiento = factor(case_when(
@@ -35,5 +35,6 @@ ggsave(fig3, file = "figs/fig3.png")
 ggsave(fig4, file = "figs/fig4.png")
 
 
-fig4
+
+
 
