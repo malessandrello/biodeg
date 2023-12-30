@@ -1,6 +1,6 @@
 library(dplyr)
 library(ggplot2)
-save(temp_data, file ="robjects/temp__data.rda")
+save(temp_data, file ="robjects/temp_data.rda")
 temp_data1 <- temp_data %>% mutate(Mes = case_when(
   días<30 ~ "Mes 1", 
   between(días, 30,60)~ "Mes 2", 
