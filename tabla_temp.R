@@ -25,7 +25,9 @@ fig1 <- fig1 + xlab("Tiempo (días)") + ylab("Temperaturas (°C)")
 ggsave("fig1.png", plot = fig1)
 
 
+temps <- temp_data1 %>% filter(días <60)%>% pull(TEMP)
 
+quantile(temps, seq(0, 1, 0.1))
 
 
 

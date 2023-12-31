@@ -1,0 +1,240 @@
+---
+title: "Biorremediación de suelos"
+author: "Mauricio Alessandrello"
+date: "2023-12-30"
+
+output:
+  html_document
+    
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+ggplot2::theme_set(ggplot2::theme_minimal())
+
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(patchwork)
+```
+
+
+
+## Procedimiento:
+
+
+Se dipusieron pilas de 100 litros de suelo contaminado con hidrocarburos (concentración inicial: 36919 mg/kg) a las cuales se les realizaron los siguientes tratamientos:  
+
+* Atenuación natural: Agregado de agua y volteos cada 15 días.  
+* Bioestimulación: Igual que atenuación natural + agregado de fertilizante.  
+* Biosurfactante: Igual que bioestimulación + agregado de biosurfactante.  
+* Bioaumentación: Igual que bioestimulación + agregado de *Pseudomonas monteilli* P26
+
+Cada mes se tomó una muestra de cada pila y se determinó la concentración de hidrocarburos y de bacterias degradadoras.
+
+El ensayo se realizó entre el 6 de julio y el 22 de noviembre. Las temperaturas durante el transcurso del ensayo se obtuvieron del [registro del Servicio Meteorológico Nacional](https://www.smn.gob.ar/descarga-de-datos)(Fig. 1).    
+
+ 
+
+------------------------------------------------------------------------
+
+```{r temperaturas, echo=FALSE, out.height="100%", out.width= "100%"}
+
+load("C:/Users/Usuario/projects/biodeg/biodeg/robjects/temp_data.rda")
+
+temp_data2 <- temp_data %>% mutate(Mes = case_when(
+  días<30 ~ "Mes 1", 
+  between(días, 30,60)~ "Mes 2", 
+  between(días, 60,90)~"Mes 3", 
+  between(días,90,120)~"Mes 4",
+  días>120 ~ "Mes 5"), 
+  Temperaturas = case_when(
+  between(TEMP, -5, 15) ~ "Temperaturas menores a 15 °C", 
+  TEMP>15 ~ "Temperaturas mayores a 15 °C"),
+  día_mes = case_when(
+    Mes == "Mes 1" ~ días,
+    Mes == "Mes 2" ~ días - 30,
+    Mes == "Mes 3" ~ días - 60,
+    Mes == "Mes 4" ~ días-90,
+    Mes == "Mes 5" ~ días -120))
+
+fig1 <- temp_data2 %>% filter(Mes %in% c("Mes 1", "Mes 2", "Mes 3", "Mes 4", "Mes 5")) %>%
+  ggplot(aes(día_mes, TEMP, col = Temperaturas))+
+  geom_point(show.legend = FALSE) + facet_wrap(~Mes)
+
+fig1 <- fig1 + xlab("Tiempo (días)") + ylab("Temperaturas (°C)")
+fig1
+
+
+
+```
+
+Fig.1: Temperaturas horarias para cada mes del ensayo. En naranja y celeste, las temperaturas mayores y menores a 15 °C 
+respectivamente.  
+
+---------------------------------------------------------------------------
+
+Nótese que durante los primeros dos meses, el 90% del tiempo la temperatura fue menor a 15.2 °C y la mitad del tiempo, menor a 7.6 °C, según se muestra con el siguiente código: 
+
+```{r quantiles}
+
+temps <- temp_data2 %>% filter(días <60)%>% pull(TEMP)  #Se obtienen las temperaturas de los primeros 2 meses.
+
+quantile(temps, seq(0, 1, 0.1))#Se calculan los deciles de las temperaturas de los primeros dos meses.
+```
+
+
+
+------------------------------------------------------------------------
+
+## Resultados
+
+En la figura 2 se observan las concentraciones de hidrocarburos y de bacterias degradadoras obtenidas para cada tratamiento durante el transcurso del ensayo. 
+
+```{r biodeg, echo=FALSE, out.height="100%", out.width= "100%"}
+load("C:/Users/Usuario/projects/biodeg/biodeg/robjects/deg_htp2.rda")
+fig2 <- deg_htp2 %>% mutate(Tratamiento = factor(case_when(
+  Tratamiento == "AN" ~ "Atenuación natural", 
+  Tratamiento == "bioest" ~ "Bioestimulación",
+  Tratamiento == "bs" ~ "Biosurfactante",
+  Tratamiento == "P26" ~ "Bioaumentación (P26)"), levels = c("Atenuación natural", "Biosurfactante", "Bioaumentación (P26)", "Bioestimulación"))) %>% 
+  ggplot(aes(Tiempo, HTP, fill =Tratamiento)) +
+  geom_bar(stat = "identity", position = "dodge", show.legend = FALSE)+
+  geom_hline(yintercept = 10000) + 
+  scale_x_continuous(breaks = c(0, 29, 57, 85, 113, 139))+
+  xlab(NULL)+
+  ylab("HTP (mg/kg)")
+
+fig3 <- deg_htp2 %>% mutate(Tratamiento = factor(case_when(
+  Tratamiento == "AN" ~ "Atenuación natural", 
+  Tratamiento == "bioest" ~ "Bioestimulación",
+  Tratamiento == "bs" ~ "Biosurfactante",
+  Tratamiento == "P26" ~ "Bioaumentación (P26)"), levels = c("Atenuación natural", "Biosurfactante", "Bioaumentación (P26)", "Bioestimulación"))) %>% 
+  ggplot(aes(Tiempo, `UFC/g`, fill =Tratamiento)) +
+  geom_bar(stat = "identity", position = "dodge")+
+  scale_x_continuous (breaks = c(0, 29, 57, 85, 113, 139))+
+  scale_y_continuous(trans ="log10")+
+  theme(legend.position = "bottom")+
+  xlab("Tiempo (días)")+
+  ylab("UFC/g") 
+
+fig4 <- fig2/fig3
+fig4
+```
+Fig. 2: Variación en la concentración de hidrocarburos y bacterias degradadoras durante el ensayo para los distintos tratamientos.  
+
+-------------------------------------------------------------------------------
+
+Se puede obsrevar que a los 139 días la concentración de hidrocarburos para los tratamientos con fertilizante disminuyó por debajo de los 10000 mg/kg (línea horizontal). También puede observarse que durante los primeros dos meses la concentración de hidrocarburos no disminuyó, aún cuando se registró un incremento en la concentración de bacterias degradadoras.  
+
+----------------------------------------------------------------------------
+
+## Análisis de datos
+
+Para el análisis de datos, se realizan las siguientes suposiciones:  
+
+* Teniendo en cuenta que el efecto de la adición de fertilizante enmasacara el efecto que pudiera tener la adición de   biosurfactante o de P26, los tres ensayos a los que se les agregó fertilizante pueden considerarse réplicas de un mismo tratamiento. A este tratamineto lo llamaremos tratamiento con fertilizante o biosetimulación.  
+
+* El porcentaje de margen de error obtenida para los tratamientos con fertilizante será utilizado también para el tratamiento de atenuiacón natural, ante la imposibilidad de contar con réplicas de este tratamiento.  
+
+A continuación se presentan los cálculos realizados para la obtención de los resultados:
+
+
+
+```{r análisis}
+#Se obtienen los valores iniciales de la concentración de HTP y se calcula su promedio
+inicial <- deg_htp2 %>% filter(Tiempo == 0) %>% pull(HTP)
+
+t0 <- mean(inicial)
+
+#Se obtienen valores finales de la concentración de HTP para cada tratamiento
+
+
+finalAN <- deg_htp2 %>% filter(Tiempo == 139 & Tratamiento == "AN") %>% pull(HTP) 
+
+finalBS <- deg_htp2 %>% filter(Tiempo == 139 & Tratamiento == "bs") %>% pull(HTP)
+
+finalBioEst <- deg_htp2 %>% filter(Tiempo == 139 & Tratamiento == "bioest") %>% pull(HTP)
+
+finalP26 <- deg_htp2 %>% filter(Tiempo == 139 & Tratamiento == "P26") %>% pull(HTP)
+
+
+#Se crean variables para el cálculo de intervalos de confianza 95%
+
+finalBIO <- c(finalBS, finalP26, finalBioEst) # Concentraciones finales de tratamientos biológicos, se consideran como réplicas los distintos tratamientos porque no evidenciaron diferencias.
+
+avgBIO<- mean(finalBIO) # su promedio
+
+N <- length(finalBIO) # número de réplicas
+
+desvest <- sd(finalBIO) # su desviación estándar
+
+moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error usando una distribución t.
+
+moe_perc <- moe/avgBIO*100 #margen de error en %
+
+finalAN1 <- c(finalAN, finalAN + moe_perc*finalAN/100, finalAN - moe_perc*finalAN/100)# concentraciones finales del tratamiento AN. Se considera una variación de más/menos moe_perc obtenida para los tratamientos BIO
+
+avgAN <- mean(finalAN1) # su promedio
+
+lim_supBIO <- avgBIO + moe #límite superior del intervalo de confianza 95% para los tratamientos con fertilizante
+
+lim_infBIO <- avgBIO - moe # límite inferior del intervalo de confianza 95% para esos tratamientos
+
+lim_supAN <- avgAN + moe # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
+
+lim_infAN <- avgAN - moe # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
+
+
+#Datos adicionales
+
+dBIO <- t0 - avgBIO #concentración de HTP degradado en tratamiento con fertilizante
+dAN <- t0 - avgAN #concentración de HTP degradado en atenuación natural
+
+dBIO_perc <- dBIO/t0 * 100 #lo mismo expresado en % para tratamiento con fertilizante
+dAN_perc <- dAN/t0 * 100 #lo mismo expresado en % atenuación natural
+
+
+```
+-------------------------------------------------------------------------------
+
+Con los datos obtenidos se elabora la siguiente tabla con los resultados finales:  
+
+```{r tabla_resultados, echo=FALSE}
+#Construcción de tabla con resultados
+
+Bioestimulación <- c(avgBIO,lim_infBIO, lim_supBIO, dBIO, dBIO_perc)
+
+Atenuación_natural <- c(avgAN, lim_infAN, lim_supAN, dAN, dAN_perc) 
+
+datos_finales <- data.frame(Bioestimulación, Atenuación_natural)
+
+row.names(datos_finales) <- c("Concentración final HTP (mg/kg)", "Límite inferior 95% confianza (mg/kg)", "Límite superiror 95% confianza (mg/kg)", "Degradación de HTP (mg/kg)", "Degradación de HTP (%)")
+
+datos_finales <- round(datos_finales, 0)
+
+datos_finales
+```
+-----------------------------------------------------------------------------
+
+Se realiaza un test "t" y se obtiene un valor de p de 0.3%. Esto indica que hay un 0.3% de probabilidad de que los resultados obtenidos sean producto del azar.
+
+
+```{r t_test}
+t.test(finalAN1, finalBIO) # test t para la determinación del valor de p y del intervalo de confianza 95% de la diferencia entre las concentraciones finales de los tratamientos con fertilizante y atenuación natural.
+```
+
+--------------------------------------------------------------------------------------
+
+## Conclusiones
+
+* Se evidencia crecimiento de bacterias degradadoras al mes de iniciado los tratamientos que contenían fertilizante, aún   con temperaturas  atmosféricas menores a 15 °C.  
+
+* A pesar del crecimiento bacteriano, durante los primeros dos meses de tratamiento no hubo disminución en la              concentración de hidrocarburos. Esto sugiere que las bacterias utilizaron otra fuente de carbono para sustentar su       reproducción y que el consumo de hidrocarburos recién comenzó una vez agotada esta otra fuente.  
+
+* La variación en el número de bacterias degradadoras de hidrocarburos es un mejor parámetro para determinar la actividad   de la biopila que la variación en la concentración de hidrocarburos.  
+
+* En menos de 5 meses se alcanzó el objetivo de disminuir la concentración de hidrocarburos por debajo de los 10000        mg/kg.  
+
+* La sola adición de fertilizante es suficiente para un tratamiento eficiente.  
+

@@ -22,43 +22,53 @@ finalP26 <- deg_htp2 %>% filter(Tiempo == 139 & Tratamiento == "P26") %>% pull(H
 #Se crean variables para el cálculo de intervalos de confianza 95%
 
 finalBIO <- c(finalBS, finalP26, finalBioEst) # Concentraciones finales de tratamientos biológicos, se consideran como réplicas los distintos tratamientos porque no evidenciaron diferencias.
+
 avgBIO<- mean(finalBIO) # su promedio
+
 N <- length(finalBIO) # número de réplicas
+
 desvest <- sd(finalBIO) # su desviación estándar
+
 moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error usando una distribución t.
+
 moe_perc <- moe/avgBIO*100 #margen de error en %
+
 finalAN1 <- c(finalAN, finalAN + moe_perc*finalAN/100, finalAN - moe_perc*finalAN/100)# concentraciones finales del tratamiento AN. Se considera una variación de más/menos moe_perc obtenida para los tratamientos BIO
-avgAN <- mean(finalAN1) 
 
-lim_supBIo <- avgBIO + moe
-lim_infBIO <- avgBIO - moe
+avgAN <- mean(finalAN1) # su promedio
 
-lim_supAN <- avgAN + moe
-lim_infAN <- avgAN - moe
+lim_supBIO <- avgBIO + moe #límite superior del intervalo de confianza 95% para los tratamientos con fertilizante
 
-t.test(finalAN1, finalBIO)
+lim_infBIO <- avgBIO - moe # límite inferior del intervalo de confianza 95% para esos tratamientos
 
-lim_supBIo
-lim_infBIO
+lim_supAN <- avgAN + moe # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
 
-lim_supAN
-lim_infAN
+lim_infAN <- avgAN - moe # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
 
 
+#Datos adicionales
+
+dBIO <- t0 - avgBIO
+dAN <- t0 - avgAN
+
+dBIO_perc <- dBIO/t0 * 100
+dAN_perc <- dAN/t0 * 100
+
+t.test(finalAN1, finalBIO) # test t para la determinación del valor de p y del intervalo de confianza 95% de la diferencia entre las concentraciones finales de los tratamientos con fertilizante y atenuación natural.
 
 
+#Construcción de tabla con resultados
 
+Bioestimulación <- c(avgBIO,lim_infBIO, lim_supBIO, dBIO, dBIO_perc)
 
+Atenuación_natural <- c(avgAN, lim_infAN, lim_supAN, dAN, dAN_perc) 
 
+datos_finales <- data.frame(Bioestimulación, Atenuación_natural)
 
+row.names(datos_finales) <- c("Concentración final HTP (mg/kg)", "Límite inferior 95% confianza (mg/kg)", "Límite superiror 95% confianza (mg/kg)", "Degradación de HTP (mg/kg)", "Degradación de HTP (%)")
 
+datos_finales <- round(datos_finales, 0)
 
+datos_finales
 
-
-
-
-
-
-
-
-
+save(datos_finales, file = "rscripts/datos_finales.rda")
