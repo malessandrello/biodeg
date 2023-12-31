@@ -29,7 +29,7 @@ N <- length(finalBIO) # número de réplicas
 
 desvest <- sd(finalBIO) # su desviación estándar
 
-moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error usando una distribución t.
+moe <- qt(0.975, df = N - 2) * desvest/sqrt(N) #margen de error usando una distribución t.
 
 moe_perc <- moe/avgBIO*100 #margen de error en %
 

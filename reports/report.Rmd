@@ -1,7 +1,7 @@
 ---
 title: "Biorremediación de suelos"
 author: "Mauricio Alessandrello"
-date: "2023-12-30"
+date: "30-12-2023"
 
 output:
   html_document
@@ -32,7 +32,7 @@ Se dipusieron pilas de 100 litros de suelo contaminado con hidrocarburos (concen
 
 Cada mes se tomó una muestra de cada pila y se determinó la concentración de hidrocarburos y de bacterias degradadoras.
 
-El ensayo se realizó entre el 6 de julio y el 22 de noviembre. Las temperaturas durante el transcurso del ensayo se obtuvieron del [registro del Servicio Meteorológico Nacional](https://www.smn.gob.ar/descarga-de-datos)(Fig. 1).    
+El ensayo se realizó entre el 6 de julio y el 22 de noviembre. Las temperaturas durante el transcurso del ensayo se obtuvieron del [registro del Servicio Meteorológico Nacional](https://www.smn.gob.ar/descarga-de-datos) (Fig. 1).    
 
  
 
@@ -135,7 +135,7 @@ Para el análisis de datos, se realizan las siguientes suposiciones:
 
 * Teniendo en cuenta que el efecto de la adición de fertilizante enmasacara el efecto que pudiera tener la adición de   biosurfactante o de P26, los tres ensayos a los que se les agregó fertilizante pueden considerarse réplicas de un mismo tratamiento. A este tratamineto lo llamaremos tratamiento con fertilizante o biosetimulación.  
 
-* El porcentaje de margen de error obtenida para los tratamientos con fertilizante será utilizado también para el tratamiento de atenuiacón natural, ante la imposibilidad de contar con réplicas de este tratamiento.  
+* El porcentaje de margen de error obtenido para los tratamientos con fertilizante será utilizado también para el tratamiento de atenuación natural, ante la imposibilidad de contar con réplicas de este tratamiento.  
 
 A continuación se presentan los cálculos realizados para la obtención de los resultados:
 
@@ -169,7 +169,7 @@ N <- length(finalBIO) # número de réplicas
 
 desvest <- sd(finalBIO) # su desviación estándar
 
-moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error usando una distribución t.
+moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error para las cocnetraciones finales de HTP usando una distribución t.
 
 moe_perc <- moe/avgBIO*100 #margen de error en %
 
@@ -217,7 +217,7 @@ datos_finales
 ```
 -----------------------------------------------------------------------------
 
-Se realiaza un test "t" y se obtiene un valor de p de 0.3%. Esto indica que hay un 0.3% de probabilidad de que los resultados obtenidos sean producto del azar.
+Se realiaza un test "t" y se obtiene un valor de p de 0.3%. Esto indica que hay un 0.3% de probabilidad de que la diferencia obtenida entre los promedios de las concentraciones finales de HTP para los tratamientos atenuación natural y bioestimulación sea producto del azar.
 
 
 ```{r t_test}
@@ -236,5 +236,7 @@ t.test(finalAN1, finalBIO) # test t para la determinación del valor de p y del 
 
 * En menos de 5 meses se alcanzó el objetivo de disminuir la concentración de hidrocarburos por debajo de los 10000        mg/kg.  
 
-* La sola adición de fertilizante es suficiente para un tratamiento eficiente.  
+* La adición de fertilizante, junto con volteos quincenales y el mantenimiento de la humedad es suficiente para un tratamiento eficiente.  
+
+----------------------------------------------------------------------------------------------------
 
