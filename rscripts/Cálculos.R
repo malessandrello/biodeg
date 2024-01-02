@@ -37,13 +37,17 @@ finalAN1 <- c(finalAN, finalAN + moe_perc*finalAN/100, finalAN - moe_perc*finalA
 
 avgAN <- mean(finalAN1) # su promedio
 
+desvestAN <- sd(finalAN1) # su desviación estándar
+
+moeAN <- qt(0.975, df = N-1) * desvestAN/sqrt(N) # su margen de error
+
 lim_supBIO <- avgBIO + moe #límite superior del intervalo de confianza 95% para los tratamientos con fertilizante
 
 lim_infBIO <- avgBIO - moe # límite inferior del intervalo de confianza 95% para esos tratamientos
 
-lim_supAN <- avgAN + moe # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
+lim_supAN <- avgAN + moeAN # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
 
-lim_infAN <- avgAN - moe # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
+lim_infAN <- avgAN - moeAN # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
 
 
 #Datos adicionales
@@ -72,3 +76,5 @@ datos_finales <- round(datos_finales, 0)
 datos_finales
 
 save(datos_finales, file = "rscripts/datos_finales.rda")
+
+
