@@ -23,7 +23,7 @@ library(patchwork)
 ## Procedimiento:
 
 
-Se dipusieron pilas de 100 litros de suelo contaminado con hidrocarburos (concentración inicial: 36919 mg/kg) a las cuales se les realizaron los siguientes tratamientos:  
+Se dispusieron pilas de 100 litros de suelo contaminado con hidrocarburos (concentración inicial: 36919 mg/kg) a las cuales se les realizaron los siguientes tratamientos:  
 
 * Atenuación natural: Agregado de agua y volteos cada 15 días.  
 * Bioestimulación: Igual que atenuación natural + agregado de fertilizante.  
@@ -125,7 +125,7 @@ Fig. 2: Variación en la concentración de hidrocarburos y bacterias degradadora
 
 -------------------------------------------------------------------------------
 
-Se puede obsrevar que a los 139 días la concentración de hidrocarburos para los tratamientos con fertilizante disminuyó por debajo de los 10000 mg/kg (línea horizontal). También puede observarse que durante los primeros dos meses la concentración de hidrocarburos no disminuyó, aún cuando se registró un incremento en la concentración de bacterias degradadoras.  
+Se puede observar que a los 139 días la concentración de hidrocarburos para los tratamientos con fertilizante disminuyó por debajo de los 10000 mg/kg (línea horizontal). También puede observarse que durante los primeros dos meses la concentración de hidrocarburos no disminuyó, aún cuando se registró un incremento en la concentración de bacterias degradadoras.  
 
 ----------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ Se puede obsrevar que a los 139 días la concentración de hidrocarburos para lo
 
 Para el análisis de datos, se realizan las siguientes suposiciones:  
 
-* Teniendo en cuenta que el efecto de la adición de fertilizante enmasacara el efecto que pudiera tener la adición de   biosurfactante o de P26, los tres ensayos a los que se les agregó fertilizante pueden considerarse réplicas de un mismo tratamiento. A este tratamineto lo llamaremos tratamiento con fertilizante o biosetimulación.  
+* Teniendo en cuenta que el efecto de la adición de fertilizante enmascara el efecto que pudiera tener la adición de   biosurfactante o de P26, los tres ensayos a los que se les agregó fertilizante pueden considerarse réplicas de un mismo tratamiento. A este tratamiento lo llamaremos tratamiento con fertilizante o bioestimulación.  
 
 * El porcentaje de margen de error obtenido para los tratamientos con fertilizante será utilizado también para el tratamiento de atenuación natural, ante la imposibilidad de contar con réplicas de este tratamiento.  
 
@@ -169,7 +169,7 @@ N <- length(finalBIO) # número de réplicas
 
 desvest <- sd(finalBIO) # su desviación estándar
 
-moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error para las cocnetraciones finales de HTP usando una distribución t.
+moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error para las concentraciones finales de HTP usando una distribución t.
 
 moe_perc <- moe/avgBIO*100 #margen de error en %
 
@@ -217,7 +217,7 @@ datos_finales
 ```
 -----------------------------------------------------------------------------
 
-Se realiaza un test "t" y se obtiene un valor de p de 0.3%. Esto indica que hay un 0.3% de probabilidad de que la diferencia obtenida entre los promedios de las concentraciones finales de HTP para los tratamientos atenuación natural y bioestimulación sea producto del azar.
+Se realiza un test "t" y se obtiene un valor de p de 0.3%. Esto indica que hay un 0.3% de probabilidad de que la diferencia obtenida entre los promedios de las concentraciones finales de HTP para los tratamientos atenuación natural y bioestimulación sea producto del azar.
 
 
 ```{r t_test}
