@@ -78,5 +78,7 @@ datos_finales
 t.test(finalBIO)
 
 
+r1
+r2
 
 
