@@ -169,21 +169,27 @@ N <- length(finalBIO) # número de réplicas
 
 desvest <- sd(finalBIO) # su desviación estándar
 
-moe <- qt(0.975, 2) * desvest/sqrt(N) #margen de error para las concentraciones finales de HTP usando una distribución t.
+moe <- qt(0.975, df = N-1) * desvest/sqrt(N) #margen de error de las concentraciones finales para el tratamiento con fertilizante usando una distribución t.
 
 moe_perc <- moe/avgBIO*100 #margen de error en %
 
 finalAN1 <- c(finalAN, finalAN + moe_perc*finalAN/100, finalAN - moe_perc*finalAN/100)# concentraciones finales del tratamiento AN. Se considera una variación de más/menos moe_perc obtenida para los tratamientos BIO
 
-avgAN <- mean(finalAN1) # su promedio
+avgAN <- mean(finalAN1) # promedio de concentraciones finales del tratamiento atenuación natural.
+
+desvestAN <- sd(finalAN1) # su desviación estándar
+
+moeAN <- qt(0.975, df = N-1) * desvestAN/sqrt(N) # su margen de error
+
 
 lim_supBIO <- avgBIO + moe #límite superior del intervalo de confianza 95% para los tratamientos con fertilizante
 
 lim_infBIO <- avgBIO - moe # límite inferior del intervalo de confianza 95% para esos tratamientos
 
-lim_supAN <- avgAN + moe # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
+lim_supAN <- avgAN + moeAN # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
 
-lim_infAN <- avgAN - moe # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
+lim_infAN <- avgAN - moeAN # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
+
 
 
 #Datos adicionales

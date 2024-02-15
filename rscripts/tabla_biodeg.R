@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(patchwork)
 
-save(deg_htp2, file ="robjects/deg_htp2.rda")
+
 fig2 <- deg_htp2 %>% mutate(Tratamiento = factor(case_when(
   Tratamiento == "AN" ~ "Atenuación natural", 
   Tratamiento == "bioest" ~ "Bioestimulación",
@@ -23,16 +23,15 @@ fig3 <- deg_htp2 %>% mutate(Tratamiento = factor(case_when(
   ggplot(aes(Tiempo, `UFC/g`, fill =Tratamiento)) +
   geom_bar(stat = "identity", position = "dodge")+
   scale_x_continuous (breaks = c(0, 29, 57, 85, 113, 139))+
-  scale_y_continuous(trans ="log10")+
+  scale_y_continuous(trans ="log10", breaks = c(100, 1000, 10000, 100000, 1000000, 10000000, 100000000))+
   theme(legend.position = "bottom")+
   xlab("Tiempo (días)")+
   ylab("UFC/g") 
 
 fig4 <- fig2/fig3
 
-ggsave(fig2, file = "figs/fig2.png")
-ggsave(fig3, file = "figs/fig3.png")
-ggsave(fig4, file = "figs/fig4.png")
+
+
 
 
 

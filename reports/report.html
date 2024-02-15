@@ -454,21 +454,27 @@ N &lt;- length(finalBIO) # número de réplicas
 
 desvest &lt;- sd(finalBIO) # su desviación estándar
 
-moe &lt;- qt(0.975, 2) * desvest/sqrt(N) #margen de error para las concentraciones finales de HTP usando una distribución t.
+moe &lt;- qt(0.975, df = N-1) * desvest/sqrt(N) #margen de error de las concentraciones finales para el tratamiento con fertilizante usando una distribución t.
 
 moe_perc &lt;- moe/avgBIO*100 #margen de error en %
 
 finalAN1 &lt;- c(finalAN, finalAN + moe_perc*finalAN/100, finalAN - moe_perc*finalAN/100)# concentraciones finales del tratamiento AN. Se considera una variación de más/menos moe_perc obtenida para los tratamientos BIO
 
-avgAN &lt;- mean(finalAN1) # su promedio
+avgAN &lt;- mean(finalAN1) # promedio de concentraciones finales del tratamiento atenuación natural.
+
+desvestAN &lt;- sd(finalAN1) # su desviación estándar
+
+moeAN &lt;- qt(0.975, df = N-1) * desvestAN/sqrt(N) # su margen de error
+
 
 lim_supBIO &lt;- avgBIO + moe #límite superior del intervalo de confianza 95% para los tratamientos con fertilizante
 
 lim_infBIO &lt;- avgBIO - moe # límite inferior del intervalo de confianza 95% para esos tratamientos
 
-lim_supAN &lt;- avgAN + moe # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
+lim_supAN &lt;- avgAN + moeAN # límite superior del intervalo de confianza 95% para el tratamiento de atenuación natural
 
-lim_infAN &lt;- avgAN - moe # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
+lim_infAN &lt;- avgAN - moeAN # límite inferior del intervalo de confianza 95% para el tratamiento de atenuación natural
+
 
 
 #Datos adicionales
@@ -483,8 +489,8 @@ dAN_perc &lt;- dAN/t0 * 100 #lo mismo expresado en % atenuación natural</code><
 resultados finales:</p>
 <pre><code>##                                        Bioestimulación Atenuación_natural
 ## Concentración final HTP (mg/kg)                   9605              25343
-## Límite inferior 95% confianza (mg/kg)             8963              24702
-## Límite superiror 95% confianza (mg/kg)           10246              25984
+## Límite inferior 95% confianza (mg/kg)             8963              21138
+## Límite superiror 95% confianza (mg/kg)           10246              29548
 ## Degradación de HTP (mg/kg)                       27314              11576
 ## Degradación de HTP (%)                              74                 31</code></pre>
 <hr />

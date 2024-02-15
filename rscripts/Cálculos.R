@@ -29,13 +29,13 @@ N <- length(finalBIO) # número de réplicas
 
 desvest <- sd(finalBIO) # su desviación estándar
 
-moe <- qt(0.975, df = N-1) * desvest/sqrt(N) #margen de error usando una distribución t.
+moe <- qt(0.975, df = N-1) * desvest/sqrt(N) #margen de error de las concentraciones finales para el tratamiento con fertilizante usando una distribución t.
 
 moe_perc <- moe/avgBIO*100 #margen de error en %
 
 finalAN1 <- c(finalAN, finalAN + moe_perc*finalAN/100, finalAN - moe_perc*finalAN/100)# concentraciones finales del tratamiento AN. Se considera una variación de más/menos moe_perc obtenida para los tratamientos BIO
 
-avgAN <- mean(finalAN1) # su promedio
+avgAN <- mean(finalAN1) # promedio de concentraciones finales del tratamiento atenuación natural.
 
 desvestAN <- sd(finalAN1) # su desviación estándar
 
@@ -75,6 +75,8 @@ datos_finales <- round(datos_finales, 0)
 
 datos_finales
 
-save(datos_finales, file = "rscripts/datos_finales.rda")
+t.test(finalBIO)
+
+
 
 
