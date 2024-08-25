@@ -3,7 +3,7 @@ library(ggplot2)
 library(readxl)
 
 
-Datos <- read_xlsx("G:/ORG/Micro/BIO AMB/Ensayo biorremediación invierno/mauri/Datos.xlsx")
+Datos <- read_xlsx("...Datos.xlsx")
 
 AN <- Datos %>% filter(Tratamiento == "AN")
 
